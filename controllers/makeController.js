@@ -120,7 +120,12 @@ exports.make_delete_post = asyncHandler(async (req, res, next) => {
 })
 
 exports.make_update_get = asyncHandler(async (req, res, next) => {
-    res.send("NOT IMPLEMENTED: Make update GET")
+    const currentMake = Make.findById(req.params.id)
+    res.render("make_form", {
+        title: "Update Make / Model",
+        make: currentMake
+
+    })
 })  
 
 exports.make_update_post = asyncHandler(async (req, res, next) => {
