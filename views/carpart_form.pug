@@ -7,7 +7,7 @@ block content
         div.form-group
             label(for="name") Name: 
             input#name.form-control(type='text', required='true', placeholder='steering wheel, bumper, etc.'
-                name='name', value=(undefined===carpart ? '' : carpart))
+                name='name', value=(undefined===carpart ? '' : carpart.name))
             label(for="make") Make: 
             select#make.form-control(type='select', placeholder='Select vehicle make'
                 name='make', required='true')
@@ -30,9 +30,9 @@ block content
                         option(value=category._id) #{category.name}
             
             label(for="price") Price: 
-            input#price.form-control(type='number', required='true', name='price', placeholder='25.00')  
+            input#price.form-control(type='number', required='true', name='price', placeholder='25.00' value=(undefined===carpart ? 0 : carpart.price))  
             label(for="stock") Stock: 
-            input(type="number", required='true', name='stock', placeholder='0')
+            input(type="number", required='true', name='stock', placeholder='0' value=(undefined===carpart ? 0 : carpart.stock ))
         button.btn.btn-primary(type='submit') Submit
 
 

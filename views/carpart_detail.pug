@@ -9,8 +9,12 @@ block content
     p #[strong Year: ] #{carparts_detail.make.year}
 
     h3 #[strong Stock: ] #{carparts_detail.stock}
+    h3 #[Strong Price: ] #{carparts_detail.price}
 
 
     hr
     p
         a(href=carparts_detail.url+'/delete') Delete Part
+    hr
+    p 
+        a(href=carparts_detail.url+'/update') Update Part 

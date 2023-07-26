@@ -3,6 +3,7 @@ const Category = require('../models/category')
 const Make = require('../models/make')
 const { body, validationResult } = require('express-validator')
 const asyncHandler = require('express-async-handler')
+const category = require('../models/category')
 
 exports.index = asyncHandler(async(req, res, next) => {
     const [
@@ -138,10 +139,74 @@ exports.carParts_delete_post = asyncHandler(async (req, res, next) => {
 
 })
 
+
 exports.carParts_update_get = asyncHandler(async (req, res, next) => {
-    res.send("NOT IMPLEMENTED: Car Parts update GET")
+    const [carPart, allCategories, allMakes] = await Promise.all([
+        CarPart.findById(req.params.id)
+            .populate("make")
+            .populate("category"),
+        Category.find({}).exec(),
+        Make.find({}).exec()
+    ])
+    res.render("carpart_form", {
+        title: "Update Car Part",
+        categories: allCategories,
+        makes: allMakes,
+        carpart: carPart
+    })
 })
 
-exports.carParts_update_post = asyncHandler(async( req, res, next) => {
-    res.send("NOT IMPLEMENTED: Car parts update POST")
-})
+// hadle update POST request
+exports.carParts_update_post = [
+    // validate and sanitize data
+    body("name", "name is required'")
+        .trim()
+        .escape(),
+    body("make", "make is required")
+        .trim()
+        .escape(),
+    body("category", "category is required")
+        .trim()
+        .escape(),
+    body("price", "price is required")
+        .trim()
+        .escape(),
+    
+    // process the post request
+    asyncHandler(async(req, res, next) => {
+        const [allCategories, allMakes] = await Promise.all([
+            Category.find({}).exec(),
+            Make.find({}).exec()
+        ])
+
+        const errors = validationResult(req)
+
+        const updated_part = new CarPart({
+            name: req.body.name,
+            make: req.body.make,
+            category: req.body.category,
+            price: req.body.price,
+            stock: req.body.stock,
+            _id: req.params.id
+        })
+
+        if (!errors.isEmpty()) {
+            // there are errors
+            res.render("carpart_form", {
+                title: "Update Car Part",
+                categories: allCategories,
+                makes: allMakes,
+                carpart: updated_part,
+                errors: errors.array()
+
+            })
+            return;
+        } else {
+            const updatedpart = await CarPart.findByIdAndUpdate(req.params.id, updated_part, {})
+
+            res.redirect(updatedpart.url)
+        }
+
+    })
+    
+]
