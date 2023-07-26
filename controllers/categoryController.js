@@ -5,7 +5,7 @@ const {body, validationResult } = require('express-validator')
 
 const asyncHandler = require('express-async-handler')
 
-
+// Display List of all categories
 exports.category_list = asyncHandler(async (req, res, next) => {
     const categoryList = await Category.find({}, "name")
         .sort({name: 1})
@@ -17,7 +17,10 @@ exports.category_list = asyncHandler(async (req, res, next) => {
     })
 })
 
+
+// Display detail page for each category
 exports.category_detail = asyncHandler(async (req, res, next) => {
+    // database query for specific category and carpart. [The req.params property is an object containing properties mapped to the named route “parameters”. i.e. '/students/:id' ]
     const [category, carPartsInCategory] = await Promise.all([
         Category.findById(req.params.id).exec(),
         CarPart.find({category: req.params.id})
@@ -25,6 +28,8 @@ exports.category_detail = asyncHandler(async (req, res, next) => {
             .populate("category")
             .exec()        
     ])
+
+    // no results
     if (category === null){
         const err = new Error("Category not found")
         err.status = 404
@@ -39,18 +44,24 @@ exports.category_detail = asyncHandler(async (req, res, next) => {
     })
 })
 
+
+// display category create form on get
 exports.category_create_get = asyncHandler(async (req, res, next) => {
     res.render("category_form", {
         title: "Create new category"
     })
 })
 
+// handle category create on post
 exports.category_create_post = [
+    // validate and sanitize
     body("name", "category must contain atleast 3 characters")
         .trim()
         .isLength({min: 3})
         .escape(),
 
+
+    // process request after validation and sanitization
     asyncHandler(async(req, res, next) => {
 
         const errors = validationResult(req)
@@ -77,6 +88,7 @@ exports.category_create_post = [
     })
 ]
 
+// dispaly category delete form on get
 exports.category_delete_get = asyncHandler(async (req, res, next) => {
     const [category, allPartsByCategoires] = await Promise.all([
         Category.findById(req.params.id).exec(),
@@ -110,22 +122,48 @@ exports.category_delete_post = asyncHandler(async (req, res, next) => {
         })
         return;
     } else {
-        await Category.findByIdAndDelete(req.body.categoryid)
+        await Category.findByIdAndRemove(req.body.categoryid)
         res.redirect('/catalog/categories')
         
     }
 })
 
 exports.category_update_get = asyncHandler(async (req, res, next) => {
-    const category = await Category.findById(req.params.id)
-    res.render("category_update", {
+    const category = await Category.findById(req.params.id).exec()
+
+    res.render("category_form", {
         title: "Update Category",
         category: category
     })
-    console.log(category)
-    res.send("NOT IMPLEMENTED: Category update GET")
+
 })
 
-exports.category_update_post = asyncHandler(async (req, res, next) => {
-    res.send("NOT IMPLEMENTED: Category udate POST")
-})
+exports.category_update_post = [
+    body("name", "category must containt atleast 3 characaters")
+        .trim()
+        .isLength({min: 3})
+        .escape(),
+
+    asyncHandler(async(req, res, next) => {
+
+        const errors = validationResult(req)
+
+        const updated_category = new Category({
+            name: req.body.name,
+            _id: req.params.id
+        })
+
+        if(!errors.isEmpty()){
+            res.render("category_form", {
+                title: "Update Category",
+                category: updated_category
+            })
+            return;
+        } else {
+            const updatedCategory = await Category.findByIdAndUpdate(req.params.id, updated_category, {}).exec()
+
+            res.redirect(updatedCategory.url)
+        }
+    })
+
+]
