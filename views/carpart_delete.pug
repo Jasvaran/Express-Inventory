@@ -1,0 +1,11 @@
+extends layout 
+
+block content 
+    h1 #{title} #{carpart.name}
+
+    p #[strong Are you sure you want to delete #{carpart.name} ?]
+
+    form(method="POST" action="")
+        input#carpartid.form-control(type='hidden' name='carpartid', required='true', value=carpart._id )
+        button.btn.btn-primary(type='submit') Delete
+

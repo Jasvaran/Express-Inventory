@@ -1,0 +1,21 @@
+extends layout 
+
+block content 
+    h1= title 
+
+    div(class='container-fluid' style='margin-top:20px;margin-left:20px')
+        dl 
+            each part in carparts 
+                div(class='row' style='border:1px solid black')
+                    div(class='col-sm-5')
+                        dt
+                            a(href=part.url) #{part.name}
+                            dd (#{part.make.year} #{part.make.model})
+                    div(class='col-sm-3')
+                        dt
+                            p #[strong Price: ]: #{part.price}
+
+    hr
+    p 
+        a(href=make.url+'/delete') Delete Make 
+

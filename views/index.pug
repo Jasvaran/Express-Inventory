@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1 Automotive Inventory Home
+  p Welcome to Jesse's vehicle parts #{title} 
+
+
+  h1 Dynamic Content 
+  
+  p The inventory has the following record counts: 
+  
+  ul 
+    li #[strong Car Parts:] !{numCarParts}
+    li #[strong Categories:] !{numOfCategories}
+    li #[strong Makes and Models:] !{numOfMakes}
+    

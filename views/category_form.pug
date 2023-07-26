@@ -1,0 +1,17 @@
+extends layout 
+
+block content 
+    h1(style='margin-top:20px')= title 
+
+    form(method='POST' action='')
+        div.form-group(style='margin-top:20px')
+            label(for="category") Category: 
+            input#category.form-control(type='text' placeholder='wheels, exterior, etc.'
+                name='name' value=(undefined===category ? '' : category.name))
+        button.btn.btn-primary(type='submit') Submit
+    
+    if errors
+        ul 
+            for error in errors 
+                li!=error.msg
+

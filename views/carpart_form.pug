@@ -1,0 +1,43 @@
+extends layout 
+
+block content 
+    h1= title 
+
+    form(method='POST', action='')
+        div.form-group
+            label(for="name") Name: 
+            input#name.form-control(type='text', required='true', placeholder='steering wheel, bumper, etc.'
+                name='name', value=(undefined===carpart ? '' : carpart))
+            label(for="make") Make: 
+            select#make.form-control(type='select', placeholder='Select vehicle make'
+                name='make', required='true')
+                - makes.sort(function(a, b) { let textA = a.name.toUpperCase(); let textB = b.name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0})
+                
+                for make in makes
+                    if carpart
+                        option(value=make._id selected=(make._id.toString()===carpart.make._id.toString() ? 'selected' : false)) #{make.name} #{make.model} #{make.year}
+                    else 
+                        option(value=make._id) #{make.name} #{make.model} #{make.year}
+            label(for="Category") Category:  
+            select#category.form-control(type='select', placeholder='interior, exterior, wheels, etc.',
+                name='category', required='true')
+                - categories.sort(function(a, b){ let textA = a.name.toUpperCase(); let textB = b.name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0})
+
+                for category in categories 
+                    if carpart 
+                        option(value=category._id, selected=(category._id.toString()===carpart.category._id.toString() ? 'selected' : false)) #{category.name}
+                    else 
+                        option(value=category._id) #{category.name}
+            
+            label(for="price") Price: 
+            input#price.form-control(type='number', required='true', name='price', placeholder='25.00')  
+            label(for="stock") Stock: 
+            input(type="number", required='true', name='stock', placeholder='0')
+        button.btn.btn-primary(type='submit') Submit
+
+
+    if errors
+        ul 
+            for error in errors 
+                li!=error.msg
+            

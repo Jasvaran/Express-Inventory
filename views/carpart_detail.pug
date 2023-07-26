@@ -1,0 +1,16 @@
+extends layout 
+
+block content 
+    h1= title 
+
+    p #[strong Name: ] #{carparts_detail.name}
+    p #[strong Make: ] #{carparts_detail.make.name}
+    p #[strong Model: ] #{carparts_detail.make.model}
+    p #[strong Year: ] #{carparts_detail.make.year}
+
+    h3 #[strong Stock: ] #{carparts_detail.stock}
+
+
+    hr
+    p
+        a(href=carparts_detail.url+'/delete') Delete Part

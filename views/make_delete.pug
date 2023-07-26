@@ -1,0 +1,25 @@
+extends layout 
+
+block content 
+
+    h1 #{title} #{make.name}
+    
+    div.container-fluid
+        if allPartsByMake.length 
+
+            h4 Delete these parts before you delete the make and model they pertain too.
+
+            each part in allPartsByMake 
+                dl 
+                    dd 
+                        a(href=part.url) #{part.name}
+                    dt
+            
+        else 
+
+            form(method='POST', action= '')
+                div.form-group
+                    input#makeid.form-control(type='hidden', required='true',
+                        name='makeid', value=make_.id )
+                    button.btn.btn-primary(type='submit') Delete
+
