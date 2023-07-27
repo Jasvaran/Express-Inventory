@@ -3,6 +3,9 @@ const router = express.Router()
 const carParts_controller = require("../controllers/carPartsController")
 const category_controller = require("../controllers/categoryController")
 const make_controller = require("../controllers/makeController")
+const multer = require('multer')
+const upload = multer({dest: './public/images'})
+
 
 
 // routes for car parts
@@ -10,7 +13,7 @@ router.get('/', carParts_controller.index)
 
 router.get('/carparts/create', carParts_controller.carParts_create_get)
 
-router.post('/carparts/create', carParts_controller.carParts_create_post)
+router.post('/carparts/create', upload.single('avatar'), carParts_controller.carParts_create_post)
 
 router.get('/carparts/:id/delete', carParts_controller.carParts_delete_get,) 
 

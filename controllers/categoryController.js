@@ -3,6 +3,7 @@ const CarPart = require('../models/carParts')
 const {body, validationResult } = require('express-validator')
 
 
+
 const asyncHandler = require('express-async-handler')
 
 // Display List of all categories
@@ -10,7 +11,6 @@ exports.category_list = asyncHandler(async (req, res, next) => {
     const categoryList = await Category.find({}, "name")
         .sort({name: 1})
         .exec()
-    console.log(categoryList)
     res.render("category_list", {
         title: "List of Categories",
         categoryList: categoryList
@@ -35,8 +35,7 @@ exports.category_detail = asyncHandler(async (req, res, next) => {
         err.status = 404
         return next(err)
     }
-    console.log(category)
-    console.log(carPartsInCategory)
+
     res.render("category_detail", {
         title: "All Items by categories",
         category: category,

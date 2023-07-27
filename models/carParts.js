@@ -26,6 +26,9 @@ const CarPartSchema = new Schema({
     stock: {
         type: Number,
         required: true
+    },
+    image: {
+        type: String
     }
 })
 

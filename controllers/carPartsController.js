@@ -5,6 +5,8 @@ const { body, validationResult } = require('express-validator')
 const asyncHandler = require('express-async-handler')
 const category = require('../models/category')
 
+
+
 exports.index = asyncHandler(async(req, res, next) => {
     const [
         numCarParts,
@@ -16,7 +18,6 @@ exports.index = asyncHandler(async(req, res, next) => {
         Make.countDocuments({}).exec()
     ]);
 
-    console.log(numCarParts, numOfCategories, numOfMakes)
     res.render('index', {
         title: 'inventory',
         numCarParts: numCarParts,
@@ -79,16 +80,19 @@ exports.carParts_create_post = [
         .trim()
         .escape(),
     
+    
     asyncHandler(async(req, res, next) => {
-        
+        console.log(req.file)
         const errors = validationResult(req)
+
 
         const carpart = new CarPart({
             name: req.body.name,
             make: req.body.make,
             category: req.body.category,
             price: req.body.price,
-            stock: req.body.stock
+            stock: req.body.stock,
+            image: req.file.filename
         })
 
         if (!errors.isEmpty()){
@@ -96,6 +100,7 @@ exports.carParts_create_post = [
                 Category.find({}).exec(),
                 Make.find({}).exec()
             ])
+
 
             res.render("carpart_form", {
                 title: "Add Car Part",
@@ -131,11 +136,8 @@ exports.carParts_delete_get = asyncHandler(async (req, res, next) => {
 exports.carParts_delete_post = asyncHandler(async (req, res, next) => {
     const carPart = await CarPart.findById(req.params.id).exec()
 
-    res.render("carpart_delete", {
-        title: "Delete Car Part",
-        carpart: carPart
-    })
-    
+   await CarPart.findByIdAndRemove(carPart)
+   res.redirect('/catalog/carparts')
 
 })
 

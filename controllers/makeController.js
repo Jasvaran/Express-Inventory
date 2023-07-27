@@ -22,7 +22,6 @@ exports.make_detail = asyncHandler(async (req, res, next) => {
             .populate("make")
             .exec()
     ])
-    console.log(carPartByMake)
     res.render('make_detail', {
         title: 'Car Parts By Make / Model',
         carparts: carPartByMake,
