@@ -120,7 +120,7 @@ exports.make_delete_post = asyncHandler(async (req, res, next) => {
 })
 
 exports.make_update_get = asyncHandler(async (req, res, next) => {
-    const currentMake = Make.findById(req.params.id)
+    const currentMake = await Make.findById(req.params.id).exec()
     res.render("make_form", {
         title: "Update Make / Model",
         make: currentMake
@@ -128,6 +128,43 @@ exports.make_update_get = asyncHandler(async (req, res, next) => {
     })
 })  
 
-exports.make_update_post = asyncHandler(async (req, res, next) => {
-    res.send("NOT IMPLEMENTED: Make udate POST")
-})
+exports.make_update_post = [
+    // validate and sanitize data
+    body("make", "make is required")
+        .trim()
+        .escape(),
+    body("model", "Model is required")
+        .trim()
+        .escape(),
+    body("year", "year is requried")
+        .trim()
+        .escape(),
+
+    // process POST request
+    asyncHandler(async(req, res, next) => {
+
+        const errors = validationResult(req)
+
+        const updatedMake = new Make({
+            name: req.body.name,
+            year: req.body.year,
+            model: req.body.model,
+            _id: req.body.params
+        })
+
+        if (!errors.isEmpty()){
+            // there are errors
+            res.render("make_form",{
+                title: "Update Make",
+                make: updatedMake,
+                errors: errors.array(),
+            })
+            return;
+        } else {
+            // POST req is valid
+            const updated_make = await Make.findByIdAndUpdate(req.params.id, updatedMake, {})
+
+            res.redirect(updated_make.url)
+        }
+    })
+]
